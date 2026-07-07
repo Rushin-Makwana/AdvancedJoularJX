@@ -158,7 +158,7 @@ public class MonitoringHandler implements Runnable {
 			for (StackTraceElement[] stackTrace : entry.getValue()) {
                 java.util.Set<String> seenInSample = totalVersion ? new java.util.HashSet<>() : null;
 				for (StackTraceElement stackTraceElement : stackTrace) {
-					String methodName = stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName();
+					String methodName = org.noureddine.joularjx.utils.BytecodeMethodResolver.resolve(stackTraceElement);
 					if (covers.test(methodName)) {
 						if (totalVersion) {
 							if (seenInSample.add(methodName)) {
