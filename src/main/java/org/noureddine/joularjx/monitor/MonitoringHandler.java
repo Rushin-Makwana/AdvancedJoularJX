@@ -202,7 +202,7 @@ public class MonitoringHandler implements Runnable {
 			long previousThreadCpuTime = threadsCpuTime.getOrDefault(threadId, 0l);
 			if (currentThreadCpuTime < 0) { // thread has quit
 				// TODO ignore last sampling period??
-				long jump = this.sampleRateMilliseconds / 10;
+				long jump = this.sampleRateMilliseconds * 1_000_000L / 10;
 				currentThreadCpuTime = previousThreadCpuTime + jump; // assume interval of 1 millisecond
 				logger.info("Thread CPU time negative, taking previous time + " + jump + " : " + currentThreadCpuTime
 						+ " for thread: " + threadId);
