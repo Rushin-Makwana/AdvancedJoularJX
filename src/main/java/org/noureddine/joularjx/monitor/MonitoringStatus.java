@@ -38,6 +38,19 @@ public class MonitoringStatus {
 
     private double totalConsumedEnergy;
 
+    private final Map<Thread, Map<String, Double>> methodsConsumedEnergyPerThread;
+    private final Map<Thread, Map<String, Double>> filteredMethodsConsumedEnergyPerThread;
+    private final Map<Thread, Map<String, Double>> totalMethodsConsumedEnergyPerThread;
+    private final Map<Thread, Map<String, Double>> totalFilteredMethodsConsumedEnergyPerThread;
+
+    private final Map<Thread, Map<String, Map<Long, Double>>> methodsConsumptionEvolutionPerThread;
+    private final Map<Thread, Map<String, Map<Long, Double>>> filteredMethodsConsumptionEvolutionPerThread;
+
+    private final Map<Thread, Map<CallTree, Double>> callTreesConsumptionPerThread;
+    private final Map<Thread, Map<CallTree, Double>> filteredCallTreesConsumptionPerThread;
+
+    private final Map<Thread, Double> totalConsumedEnergyPerThread;
+
     /**
      * Constructor for the MonitoringStatus class. Initializes empty data structures and sets the total consumed energy to zero.
      */
@@ -53,6 +66,19 @@ public class MonitoringStatus {
         this.filteredCallTreesConsumption = new ConcurrentHashMap<>();
 
         this.totalConsumedEnergy = 0;
+
+        this.methodsConsumedEnergyPerThread = new ConcurrentHashMap<>();
+        this.filteredMethodsConsumedEnergyPerThread = new ConcurrentHashMap<>();
+        this.totalMethodsConsumedEnergyPerThread = new ConcurrentHashMap<>();
+        this.totalFilteredMethodsConsumedEnergyPerThread = new ConcurrentHashMap<>();
+
+        this.methodsConsumptionEvolutionPerThread = new ConcurrentHashMap<>();
+        this.filteredMethodsConsumptionEvolutionPerThread = new ConcurrentHashMap<>();
+
+        this.callTreesConsumptionPerThread = new ConcurrentHashMap<>();
+        this.filteredCallTreesConsumptionPerThread = new ConcurrentHashMap<>();
+
+        this.totalConsumedEnergyPerThread = new ConcurrentHashMap<>();
     }
 
     /**
@@ -227,5 +253,87 @@ public class MonitoringStatus {
      */
     public Map<CallTree, Double> getFilteredCallTreesConsumedEnergy() {
         return this.filteredCallTreesConsumption;
+    }
+
+    public void addMethodConsumedEnergyPerThread(Thread th, String methodName, double delta) {
+        methodsConsumedEnergyPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .merge(methodName, delta, Double::sum);
+    }
+
+    public void addFilteredMethodConsumedEnergyPerThread(Thread th, String methodName, double delta) {
+        filteredMethodsConsumedEnergyPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .merge(methodName, delta, Double::sum);
+    }
+
+    public void addTotalMethodConsumedEnergyPerThread(Thread th, String methodName, double delta) {
+        totalMethodsConsumedEnergyPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .merge(methodName, delta, Double::sum);
+    }
+
+    public void addTotalFilteredMethodConsumedEnergyPerThread(Thread th, String methodName, double delta) {
+        totalFilteredMethodsConsumedEnergyPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .merge(methodName, delta, Double::sum);
+    }
+
+    public void trackMethodConsumptionPerThread(Thread th, String methodName, long timestamp, double energy) {
+        methodsConsumptionEvolutionPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .computeIfAbsent(methodName, k -> new ConcurrentHashMap<>())
+                .put(timestamp, energy);
+    }
+
+    public void trackFilteredMethodConsumptionPerThread(Thread th, String methodName, long timestamp, double energy) {
+        filteredMethodsConsumptionEvolutionPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .computeIfAbsent(methodName, k -> new ConcurrentHashMap<>())
+                .put(timestamp, energy);
+    }
+
+    public void addCallTreeConsumedEnergyPerThread(Thread th, CallTree callTree, double delta) {
+        callTreesConsumptionPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .merge(callTree, delta, Double::sum);
+    }
+
+    public void addFilteredCallTreeConsumedEnergyPerThread(Thread th, CallTree callTree, double delta) {
+        filteredCallTreesConsumptionPerThread.computeIfAbsent(th, k -> new ConcurrentHashMap<>())
+                .merge(callTree, delta, Double::sum);
+    }
+
+    public void addConsumedEnergyPerThread(Thread th, double delta) {
+        totalConsumedEnergyPerThread.merge(th, delta, Double::sum);
+    }
+
+    public Map<Thread, Map<String, Double>> getMethodsConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(methodsConsumedEnergyPerThread);
+    }
+
+    public Map<Thread, Map<String, Double>> getFilteredMethodsConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(filteredMethodsConsumedEnergyPerThread);
+    }
+
+    public Map<Thread, Map<String, Double>> getTotalMethodsConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(totalMethodsConsumedEnergyPerThread);
+    }
+
+    public Map<Thread, Map<String, Double>> getTotalFilteredMethodsConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(totalFilteredMethodsConsumedEnergyPerThread);
+    }
+
+    public Map<Thread, Map<String, Map<Long, Double>>> getMethodsConsumptionEvolutionPerThread() {
+        return Collections.unmodifiableMap(methodsConsumptionEvolutionPerThread);
+    }
+
+    public Map<Thread, Map<String, Map<Long, Double>>> getFilteredMethodsConsumptionEvolutionPerThread() {
+        return Collections.unmodifiableMap(filteredMethodsConsumptionEvolutionPerThread);
+    }
+
+    public Map<Thread, Map<CallTree, Double>> getCallTreesConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(callTreesConsumptionPerThread);
+    }
+
+    public Map<Thread, Map<CallTree, Double>> getFilteredCallTreesConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(filteredCallTreesConsumptionPerThread);
+    }
+
+    public Map<Thread, Double> getTotalConsumedEnergyPerThread() {
+        return Collections.unmodifiableMap(totalConsumedEnergyPerThread);
     }
 }

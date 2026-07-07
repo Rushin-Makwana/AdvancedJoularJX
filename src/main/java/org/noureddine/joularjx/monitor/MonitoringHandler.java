@@ -54,6 +54,7 @@ public class MonitoringHandler implements Runnable {
 	private final long sampleTimeMilliseconds = 1000;
 	private final long sampleRateMilliseconds;
 	private final int sampleIterations;
+	private final boolean statusPerThread;
 
 	/**
 	 * Creates a new MonitoringHandler.
@@ -79,6 +80,7 @@ public class MonitoringHandler implements Runnable {
 		this.threadBean = threadBean;
 		this.sampleRateMilliseconds = properties.stackMonitoringSampleRate();
 		this.sampleIterations = (int) (sampleTimeMilliseconds / sampleRateMilliseconds);
+		this.statusPerThread = properties.getStatusPerThread();
 	}
 
 	/**
@@ -293,6 +295,13 @@ public class MonitoringHandler implements Runnable {
 
                 }
 
+                if (this.statusPerThread) {
+                    for (var threadEntry : methodsStats.entrySet()) {
+                        double threadEnergy = threadCpuTimePercentages.getOrDefault(threadEntry.getKey().getId(), 0.0);
+                        status.addConsumedEnergyPerThread(threadEntry.getKey(), threadEnergy);
+                    }
+                }
+
                 updateMethodsConsumedEnergy(methodsStats, totalSelfEncountersPerThread, threadCpuTimePercentages, status::addMethodConsumedEnergy,
                         Scope.ALL, false);
                 updateMethodsConsumedEnergy(methodsStatsFiltered,totalSelfEncountersPerThread, threadCpuTimePercentages,
@@ -307,9 +316,9 @@ public class MonitoringHandler implements Runnable {
                 // Updating call trees consumption if option is enabled
                 if (this.properties.callTreesConsumption()) {
                     updateCallTreesConsumedEnergy(callTreesStats, threadCpuTimePercentages,
-                            status::addCallTreeConsumedEnergy);
+                            status::addCallTreeConsumedEnergy, Scope.ALL);
                     updateCallTreesConsumedEnergy(filteredCallTreeStats, threadCpuTimePercentages,
-                            status::addFilteredCallTreeConsumedEnergy);
+                            status::addFilteredCallTreeConsumedEnergy, Scope.FILTERED);
 
                     // Writing runtime call trees power only if option is enabled
                     if (this.properties.saveCallTreesRuntimeData()) {
@@ -431,7 +440,7 @@ public class MonitoringHandler implements Runnable {
                     methodPower = threadCpuTimePercentages.get(threadEntry.getKey().getId()) * (methodEntry.getValue() / totalSelfEncounters);
                 }
 
-                if(!totalVersion) {
+                if (!totalVersion) {
                     // Only of consumption evolution tracking is enabled
                     if (this.properties.trackConsumptionEvolution()) {
                         // computing the UNIX EPOCH timestamp
@@ -441,6 +450,32 @@ public class MonitoringHandler implements Runnable {
                             this.status.trackMethodConsumption(methodEntry.getKey(), unixTimestamp, methodPower);
                         } else {
                             this.status.trackFilteredMethodConsumption(methodEntry.getKey(), unixTimestamp, methodPower);
+                        }
+                    }
+                }
+
+                if (this.statusPerThread) {
+                    Thread thread = threadEntry.getKey();
+                    String methodName = methodEntry.getKey();
+                    if (!totalVersion) {
+                        if (scope == Scope.ALL) {
+                            status.addMethodConsumedEnergyPerThread(thread, methodName, methodPower);
+                            if (this.properties.trackConsumptionEvolution()) {
+                                long unixTimestamp = System.currentTimeMillis() / 1000L;
+                                status.trackMethodConsumptionPerThread(thread, methodName, unixTimestamp, methodPower);
+                            }
+                        } else {
+                            status.addFilteredMethodConsumedEnergyPerThread(thread, methodName, methodPower);
+                            if (this.properties.trackConsumptionEvolution()) {
+                                long unixTimestamp = System.currentTimeMillis() / 1000L;
+                                status.trackFilteredMethodConsumptionPerThread(thread, methodName, unixTimestamp, methodPower);
+                            }
+                        }
+                    } else {
+                        if (scope == Scope.ALL) {
+                            status.addTotalMethodConsumedEnergyPerThread(thread, methodName, methodPower);
+                        } else {
+                            status.addTotalFilteredMethodConsumedEnergyPerThread(thread, methodName, methodPower);
                         }
                     }
                 }
@@ -460,7 +495,7 @@ public class MonitoringHandler implements Runnable {
      *                                 consumption
      */
     private void updateCallTreesConsumedEnergy(Map<Thread, Map<CallTree, Integer>> stats,
-            Map<Long, Double> threadCpuTimePercentages, ObjDoubleConsumer<CallTree> callTreeConsumer) {
+            Map<Long, Double> threadCpuTimePercentages, ObjDoubleConsumer<CallTree> callTreeConsumer, Scope scope) {
         for (var entry : stats.entrySet()) {
             double totalEncounters = entry.getValue().values().stream().mapToDouble(i -> i).sum();
 
@@ -469,6 +504,14 @@ public class MonitoringHandler implements Runnable {
                 if (totalEncounters >= Double.MIN_VALUE) {
                     stackTracePower = threadCpuTimePercentages.get(entry.getKey().getId())
                             * (callTreeEntry.getValue() / totalEncounters);
+                }
+
+                if (this.statusPerThread) {
+                    if (scope == Scope.ALL) {
+                        this.status.addCallTreeConsumedEnergyPerThread(entry.getKey(), callTreeEntry.getKey(), stackTracePower);
+                    } else {
+                        this.status.addFilteredCallTreeConsumedEnergyPerThread(entry.getKey(), callTreeEntry.getKey(), stackTracePower);
+                    }
                 }
 
                 callTreeConsumer.accept(callTreeEntry.getKey(), stackTracePower);

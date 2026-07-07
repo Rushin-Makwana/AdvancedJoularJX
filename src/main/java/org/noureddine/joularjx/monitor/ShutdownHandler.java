@@ -77,6 +77,20 @@ public class ShutdownHandler implements Runnable {
 					new ResultWriterConfiguration(ResultScope.FILTERED_TOTAL_METHODS));
 
 
+			if (this.properties.getStatusPerThread()) {
+				// All methods per thread
+				this.saveSelfAndTotalResultsPerThread(
+						status.getMethodsConsumedEnergyPerThread(),
+						status.getTotalMethodsConsumedEnergyPerThread(),
+						new ResultWriterConfiguration(ResultScope.ALL_TOTAL_METHODS, "per-thread"));
+
+				// Filtered methods per thread
+				this.saveSelfAndTotalResultsPerThread(
+						status.getFilteredMethodsConsumedEnergyPerThread(),
+						status.getTotalFilteredMethodsConsumedEnergyPerThread(),
+						new ResultWriterConfiguration(ResultScope.FILTERED_TOTAL_METHODS, "per-thread"));
+			}
+
 			// Writing consumption evolution files only if the option is enabled
 			if (this.properties.trackConsumptionEvolution()) {
 				// All methods
@@ -90,6 +104,16 @@ public class ShutdownHandler implements Runnable {
 					this.saveResults(methodEntry.getValue(), new ResultWriterConfiguration(
 							ResultScope.FILTERED_EVOLUTION, sanitizeMethodName(methodEntry.getKey())));
 				}
+
+				if (this.properties.getStatusPerThread()) {
+					// All methods evolution per thread
+					this.saveEvolutionResultsPerThread(this.status.getMethodsConsumptionEvolutionPerThread(),
+							new ResultWriterConfiguration(ResultScope.ALL_EVOLUTION, "per-thread"));
+
+					// Filtered methods evolution per thread
+					this.saveEvolutionResultsPerThread(this.status.getFilteredMethodsConsumptionEvolutionPerThread(),
+							new ResultWriterConfiguration(ResultScope.FILTERED_EVOLUTION, "per-thread"));
+				}
 			}
 
 			// Writing call trees consumption file only if the option is enabled
@@ -98,6 +122,16 @@ public class ShutdownHandler implements Runnable {
 						new ResultWriterConfiguration(ResultScope.ALL_TOTAL_CALL_TREE));
 				this.saveResults(status.getFilteredCallTreesConsumedEnergy(),
 						new ResultWriterConfiguration(ResultScope.FILTERED_TOTAL_CALL_TREE));
+
+				if (this.properties.getStatusPerThread()) {
+					// All call trees per thread
+					this.saveResultsPerThread(status.getCallTreesConsumedEnergyPerThread(),
+							new ResultWriterConfiguration(ResultScope.ALL_TOTAL_CALL_TREE, "per-thread"));
+
+					// Filtered call trees per thread
+					this.saveResultsPerThread(status.getFilteredCallTreesConsumedEnergyPerThread(),
+							new ResultWriterConfiguration(ResultScope.FILTERED_TOTAL_CALL_TREE, "per-thread"));
+				}
 			}
 		} catch (final IOException exception) {
 			// Continue shutting down
@@ -177,4 +211,75 @@ public class ShutdownHandler implements Runnable {
         }
 
     }
+
+	public <K> void saveSelfAndTotalResultsPerThread(Map<Thread, Map<K, Double>> selfEnergyMap, Map<Thread, Map<K, Double>> totalEnergyMap, ResultWriterConfiguration config) throws IOException {
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.setConfiguration(config);
+		}
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.writeString("Thread ID, Method Name, Self Energy (Joules), Total Energy (Joules)");
+		}
+		for (final var threadEntry : totalEnergyMap.entrySet()) {
+			Thread thread = threadEntry.getKey();
+			String threadIdStr = String.valueOf(thread.getId());
+			Map<K, Double> innerTotalMap = threadEntry.getValue();
+			Map<K, Double> innerSelfMap = selfEnergyMap.getOrDefault(thread, java.util.Collections.emptyMap());
+
+			for (final var methodEntry : innerTotalMap.entrySet()) {
+				K methodName = methodEntry.getKey();
+				double selfEnergyValue = innerSelfMap.getOrDefault(methodName, 0.0);
+				double totalEnergyValue = methodEntry.getValue();
+				String combinedKey = threadIdStr + ",\"" + methodName.toString() + "\"";
+				for (final ResultWriter resultWriter : resultWriters) {
+					resultWriter.write(combinedKey, selfEnergyValue, totalEnergyValue);
+				}
+			}
+		}
+
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.closeTarget();
+		}
+	}
+
+	public <K> void saveResultsPerThread(Map<Thread, Map<K, Double>> perThreadMap, ResultWriterConfiguration config) throws IOException {
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.setConfiguration(config);
+		}
+
+		for (final var threadEntry : perThreadMap.entrySet()) {
+			String threadId = String.valueOf(threadEntry.getKey().getId());
+			for (final var innerEntry : threadEntry.getValue().entrySet()) {
+				String combinedKey = threadId + "," + innerEntry.getKey().toString();
+				for (final ResultWriter resultWriter : resultWriters) {
+					resultWriter.write(combinedKey, innerEntry.getValue());
+				}
+			}
+		}
+
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.closeTarget();
+		}
+	}
+
+	public <K> void saveEvolutionResultsPerThread(Map<Thread, Map<K, Map<Long, Double>>> perThreadEvolutionMap, ResultWriterConfiguration config) throws IOException {
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.setConfiguration(config);
+		}
+
+		for (final var threadEntry : perThreadEvolutionMap.entrySet()) {
+			String threadId = String.valueOf(threadEntry.getKey().getId());
+			for (final var methodEntry : threadEntry.getValue().entrySet()) {
+				for (final var timeEntry : methodEntry.getValue().entrySet()) {
+					String combinedKey = threadId + "," + methodEntry.getKey().toString() + "," + timeEntry.getKey();
+					for (final ResultWriter resultWriter : resultWriters) {
+						resultWriter.write(combinedKey, timeEntry.getValue());
+					}
+				}
+			}
+		}
+
+		for (final ResultWriter resultWriter : resultWriters) {
+			resultWriter.closeTarget();
+		}
+	}
 }

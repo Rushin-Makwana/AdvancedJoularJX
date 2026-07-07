@@ -88,6 +88,8 @@ public class Agent {
         MonitoringHandler monitoringHandler = new MonitoringHandler(appPid, properties, resultWriters, cpu, status, osBean, threadBean);
         ShutdownHandler shutdownHandler = new ShutdownHandler(appPid, resultWriters, cpu, status, properties);
 
+        logger.info("Collection per thread is enabled: " + properties.getStatusPerThread() );
+
         logger.log(Level.INFO, "Initialization finished");
 
         new Thread(monitoringHandler, COMPUTATION_THREAD_NAME).start();

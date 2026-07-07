@@ -65,6 +65,7 @@ public class AgentProperties {
      * Property key for the Joular Core ring buffer path.
      */
     public static final String JOULAR_CORE_RINGBUFFER_PATH_PROPERTY = "joular-core-ringbuffer-path";
+    public static final String STATUS_PER_THREAD = "status-per-thread";
 
     /**
      * Loaded configuration properties
@@ -91,6 +92,7 @@ public class AgentProperties {
     private final String joularCorePath;
     private final String joularCoreParameters;
     private final String joularCoreRingBufferPath;
+    private final boolean statusPerThread;
 
     /**
      * Instantiate a new instance which will load the properties
@@ -120,6 +122,7 @@ public class AgentProperties {
         this.joularCorePath = loadJoularCorePath();
         this.joularCoreParameters = loadJoularCoreParameters();
         this.joularCoreRingBufferPath = loadJoularCoreRingBufferPath();
+        this.statusPerThread = loadStatusPerThread();
     }
 
     /**
@@ -313,6 +316,15 @@ public class AgentProperties {
      */
     public String getJoularCoreRingBufferPath() {
         return this.joularCoreRingBufferPath;
+    }
+
+    /**
+     * Indicates whether status collection per thread is enabled.
+     *
+     * @return true if status collection per thread is enabled, false otherwise
+     */
+    public boolean getStatusPerThread() {
+        return this.statusPerThread;
     }
 
     private Properties loadProperties(FileSystem fileSystem) {
@@ -535,5 +547,14 @@ public class AgentProperties {
      */
     public String loadJoularCoreRingBufferPath() {
         return properties.getProperty(JOULAR_CORE_RINGBUFFER_PATH_PROPERTY);
+    }
+
+    /**
+     * Loads collection status (per thread or in aggregate) from properties.
+     *
+     * @return the boolean indicating status collection mode (true for per thread, false for aggregate)
+     */
+    public boolean loadStatusPerThread() {
+        return Boolean.parseBoolean(properties.getProperty(STATUS_PER_THREAD));
     }
 }
