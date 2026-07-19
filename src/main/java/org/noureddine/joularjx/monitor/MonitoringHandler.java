@@ -51,10 +51,11 @@ public class MonitoringHandler implements Runnable {
 	private final MonitoringStatus status;
 	private final OperatingSystemMXBean osBean;
 	private final ThreadMXBean threadBean;
-	private final long sampleTimeMilliseconds = 1000;
-	private final long sampleRateMilliseconds;
-	private final int sampleIterations;
+	private final long sampleTimeMilliseconds = 22000; // sample period
+	private final long sampleRateMilliseconds; // subsample period
+	private final int sampleIterations; // number of subsamples in a sample
 	private final boolean statusPerThread;
+	private int currentCycleActualIterations;
 
 	/**
 	 * Creates a new MonitoringHandler.
@@ -81,6 +82,7 @@ public class MonitoringHandler implements Runnable {
 		this.sampleRateMilliseconds = properties.stackMonitoringSampleRate();
 		this.sampleIterations = (int) (sampleTimeMilliseconds / sampleRateMilliseconds);
 		this.statusPerThread = properties.getStatusPerThread();
+		this.currentCycleActualIterations = 0;
 	}
 
 	/**
@@ -201,17 +203,21 @@ public class MonitoringHandler implements Runnable {
 			long currentThreadCpuTime = threadBean.getThreadCpuTime(threadId);
 			long previousThreadCpuTime = threadsCpuTime.getOrDefault(threadId, 0l);
 			if (currentThreadCpuTime < 0) { // thread has quit
-				// TODO ignore last sampling period??
-				long jump = this.sampleRateMilliseconds * 1_000_000L / 10;
-				currentThreadCpuTime = previousThreadCpuTime + jump; // assume interval of 1 millisecond
-				logger.info("Thread CPU time negative, taking previous time + " + jump + " : " + currentThreadCpuTime
-						+ " for thread: " + threadId);
+				// Previous Logic
+				// long jump = this.sampleRateMilliseconds * 1_000_000L / 10;
+				// currentThreadCpuTime = previousThreadCpuTime + jump; // assume interval of 1 millisecond
+				// logger.info("Thread CPU time negative, taking previous time + " + jump + " : " + currentThreadCpuTime
+				// 		+ " for thread: " + threadId);
+
+				// New proportion-based estimation:
+				long jump = this.currentCycleActualIterations * this.sampleRateMilliseconds * 1_000_000L;
+				currentThreadCpuTime = previousThreadCpuTime + jump;
 			}
 
 			threadsCpuTime.put(threadId, currentThreadCpuTime);
 			long delta = currentThreadCpuTime - previousThreadCpuTime;
 			double adjustedThreadCpuTime = delta * threadEntry.getValue().values().stream().mapToDouble(i -> i).sum()
-					/ sampleIterations;
+					/ (this.currentCycleActualIterations > 0 ? this.currentCycleActualIterations : 1);
 			totalThreadsCpuTime += adjustedThreadCpuTime;
 			actualThreadsCpuTime.put(threadId, adjustedThreadCpuTime);
 		}
@@ -358,8 +364,10 @@ public class MonitoringHandler implements Runnable {
      */
     private Map<Thread, List<StackTraceElement[]>> sample() {
         Map<Thread, List<StackTraceElement[]>> result = new HashMap<>();
+        this.currentCycleActualIterations = 0;
         try {
             for (int duration = 0; duration < sampleTimeMilliseconds; duration += sampleRateMilliseconds) {
+                this.currentCycleActualIterations++;
                 for (var entry : Thread.getAllStackTraces().entrySet()) {
                     String threadName = entry.getKey().getName();
                     // Ignoring agent related threads, if option is enabled
