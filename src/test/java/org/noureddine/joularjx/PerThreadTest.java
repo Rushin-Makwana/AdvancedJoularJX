@@ -9,7 +9,8 @@ public class PerThreadTest {
     /**
      * Main entry point to start the PerThreadTest workload.
      * Spawns Worker-A and Worker-B and joins them.
-     *
+     * both threads are declared using lambda expressions (() -> { ... })
+     * inside the main method, the Java compiler compiles them as two separate synthetic methods belonging to main
      * @param args the command-line arguments
      * @throws InterruptedException if any thread execution is interrupted
      */
@@ -69,3 +70,6 @@ public class PerThreadTest {
         return val;
     }
 }
+
+
+// Total Energy consumption = Worker Threads (A + B) + java.io.FileInputStream.open0 - loading classes off the classpath)
