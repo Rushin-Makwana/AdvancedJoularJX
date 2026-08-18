@@ -51,7 +51,7 @@ public class MonitoringHandler implements Runnable {
 	private final MonitoringStatus status;
 	private final OperatingSystemMXBean osBean;
 	private final ThreadMXBean threadBean;
-	private final long sampleTimeMilliseconds = 22000; // sample period
+	private final long sampleTimeMilliseconds = 1000; // sample period
 	private final long sampleRateMilliseconds; // subsample period
 	private final int sampleIterations; // number of subsamples in a sample
 	private final boolean statusPerThread;
