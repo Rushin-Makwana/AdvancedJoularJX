@@ -1,0 +1,27 @@
+Method Name, Self Energy (Joules), Total Energy (Joules)
+java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker),0.00000000e+00,4.92346248e-03
+org.noureddine.joularjx.PrimeUtils.isPrime(int),5.18847835e+01,5.18847835e+01
+jdk.internal.loader.BuiltinClassLoader.findClassOnClassPathOrNull(java.lang.String),0.00000000e+00,3.30908473e+00
+java.io.FileInputStream.open0,3.30908473e+00,3.30908473e+00
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard(),0.00000000e+00,7.44478290e+01
+java.lang.ref.Reference.waitForReferencePendingList,1.45632120e-03,1.45632120e-03
+jdk.internal.loader.BuiltinClassLoader.loadClassOrNull(java.lang.String,boolean),0.00000000e+00,3.30908473e+00
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes(int),1.92539609e+01,7.11387443e+01
+jdk.internal.misc.InnocuousThread.run(),0.00000000e+00,4.92346248e-03
+java.io.FileInputStream.<init>(java.io.File),0.00000000e+00,3.30908473e+00
+org.noureddine.joularjx.OverallEnergyValidationSampling.main(java.lang.String[]),0.00000000e+00,7.44478290e+01
+java.lang.ClassLoader.loadClass(java.lang.String),0.00000000e+00,3.30908473e+00
+java.lang.ProcessHandleImpl$1.run(),0.00000000e+00,4.92346248e-03
+jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(java.lang.String,boolean),0.00000000e+00,3.30908473e+00
+jdk.internal.loader.BuiltinClassLoader.defineClass(java.lang.String,jdk.internal.loader.Resource),0.00000000e+00,3.30908473e+00
+java.lang.Thread.runWith(java.lang.Object,java.lang.Runnable),0.00000000e+00,4.92346248e-03
+java.lang.Thread.run(),0.00000000e+00,4.92346248e-03
+jdk.internal.loader.URLClassPath$FileLoader$1.getInputStream(),0.00000000e+00,3.30908473e+00
+java.util.concurrent.ThreadPoolExecutor$Worker.run(),0.00000000e+00,4.92346248e-03
+java.io.FileInputStream.open(java.lang.String),0.00000000e+00,3.30908473e+00
+java.lang.ref.Reference.processPendingReferences(),0.00000000e+00,1.45632120e-03
+jdk.internal.loader.Resource.getByteBuffer(),0.00000000e+00,3.30908473e+00
+jdk.internal.loader.Resource.cachedInputStream(),0.00000000e+00,3.30908473e+00
+jdk.internal.loader.BuiltinClassLoader.loadClass(java.lang.String,boolean),0.00000000e+00,3.30908473e+00
+java.lang.ref.Reference$ReferenceHandler.run(),0.00000000e+00,1.45632120e-03
+java.lang.ProcessHandleImpl.waitForProcessExit0,4.92346248e-03,4.92346248e-03

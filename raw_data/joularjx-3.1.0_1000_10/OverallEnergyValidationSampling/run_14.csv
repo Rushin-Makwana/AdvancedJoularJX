@@ -1,0 +1,25 @@
+Method Name, Self Energy (Joules), Total Energy (Joules)
+java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker),0.00000000e+00,7.85366585e-03
+org.noureddine.joularjx.PrimeUtils.isPrime(int),4.91447730e+01,4.91447730e+01
+jdk.internal.loader.BuiltinClassLoader.findClassOnClassPathOrNull(java.lang.String),0.00000000e+00,1.13783573e-01
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard(),3.44386659e-01,5.71796802e+01
+java.lang.System.currentTimeMillis,3.61283079e-01,3.61283079e-01
+java.lang.ref.Reference.waitForReferencePendingList,8.39946911e-03,8.39946911e-03
+jdk.internal.loader.BuiltinClassLoader.loadClassOrNull(java.lang.String,boolean),0.00000000e+00,1.13783573e-01
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes(int),7.21545387e+00,5.63602269e+01
+jdk.internal.misc.InnocuousThread.run(),0.00000000e+00,7.85366585e-03
+java.security.SecureClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.CodeSource),0.00000000e+00,1.13783573e-01
+org.noureddine.joularjx.OverallEnergyValidationSampling.main(java.lang.String[]),0.00000000e+00,5.71796802e+01
+java.lang.ClassLoader.loadClass(java.lang.String),0.00000000e+00,1.13783573e-01
+java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain),0.00000000e+00,1.13783573e-01
+java.lang.ProcessHandleImpl$1.run(),0.00000000e+00,7.85366585e-03
+jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(java.lang.String,boolean),0.00000000e+00,1.13783573e-01
+jdk.internal.loader.BuiltinClassLoader.defineClass(java.lang.String,jdk.internal.loader.Resource),0.00000000e+00,1.13783573e-01
+java.lang.Thread.runWith(java.lang.Object,java.lang.Runnable),0.00000000e+00,7.85366585e-03
+java.lang.Thread.run(),0.00000000e+00,7.85366585e-03
+java.util.concurrent.ThreadPoolExecutor$Worker.run(),0.00000000e+00,7.85366585e-03
+java.lang.ref.Reference.processPendingReferences(),0.00000000e+00,8.39946911e-03
+jdk.internal.loader.BuiltinClassLoader.loadClass(java.lang.String,boolean),0.00000000e+00,1.13783573e-01
+java.lang.ClassLoader.defineClass1,1.13783573e-01,1.13783573e-01
+java.lang.ref.Reference$ReferenceHandler.run(),0.00000000e+00,8.39946911e-03
+java.lang.ProcessHandleImpl.waitForProcessExit0,7.85366585e-03,7.85366585e-03

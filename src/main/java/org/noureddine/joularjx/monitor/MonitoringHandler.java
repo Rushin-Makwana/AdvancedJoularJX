@@ -51,7 +51,7 @@ public class MonitoringHandler implements Runnable {
 	private final MonitoringStatus status;
 	private final OperatingSystemMXBean osBean;
 	private final ThreadMXBean threadBean;
-	private final long sampleTimeMilliseconds = 1000; // sample period
+	private final long sampleTimeMilliseconds = Long.getLong("joularjx.sampleTime", 1000L); // sample period
 	private final long sampleRateMilliseconds; // subsample period
 	private final int sampleIterations; // number of subsamples in a sample
 	private final boolean statusPerThread;
@@ -204,7 +204,7 @@ public class MonitoringHandler implements Runnable {
 			long previousThreadCpuTime = threadsCpuTime.getOrDefault(threadId, 0l);
 			if (currentThreadCpuTime < 0) { // thread has quit
 				// Previous Logic
-				// long jump = this.sampleRateMilliseconds * 1_000_000L / 10;
+				// long jump = this.sampleRateMilliseconds / 10;
 				// currentThreadCpuTime = previousThreadCpuTime + jump; // assume interval of 1 millisecond
 				// logger.info("Thread CPU time negative, taking previous time + " + jump + " : " + currentThreadCpuTime
 				// 		+ " for thread: " + threadId);

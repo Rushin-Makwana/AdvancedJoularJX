@@ -1,0 +1,8 @@
+org.noureddine.joularjx.PrimeUtils.isPrime,48.0402
+java.lang.System.currentTimeMillis,0.4191
+jdk.internal.org.objectweb.asm.Attribute.putAttributes,0.0657
+java.lang.ref.Reference.waitForReferencePendingList,0.0023
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard,0.1774
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes,8.6650
+sun.launcher.LauncherHelper.validateMainClass,0.0776
+java.lang.ProcessHandleImpl.waitForProcessExit0,0.0052

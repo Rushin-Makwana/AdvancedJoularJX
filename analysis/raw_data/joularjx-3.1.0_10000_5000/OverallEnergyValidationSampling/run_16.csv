@@ -1,0 +1,16 @@
+Method Name, Self Energy (Joules), Total Energy (Joules)
+java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker),0.00000000e+00,3.50098508e-03
+org.noureddine.joularjx.PrimeUtils.isPrime(int),2.43182197e+01,2.43182197e+01
+java.lang.Thread.runWith(java.lang.Object,java.lang.Runnable),0.00000000e+00,3.50098508e-03
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard(),4.19279650e-02,2.84690882e+01
+java.lang.System.currentTimeMillis,8.38559300e-02,8.38559300e-02
+java.lang.ref.Reference.waitForReferencePendingList,3.87833676e-03,3.87833676e-03
+java.lang.Thread.run(),0.00000000e+00,3.50098508e-03
+java.util.concurrent.ThreadPoolExecutor$Worker.run(),0.00000000e+00,3.50098508e-03
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes(int),4.02508464e+00,2.83433043e+01
+jdk.internal.misc.InnocuousThread.run(),0.00000000e+00,3.50098508e-03
+java.lang.ref.Reference.processPendingReferences(),0.00000000e+00,3.87833676e-03
+org.noureddine.joularjx.OverallEnergyValidationSampling.main(java.lang.String[]),0.00000000e+00,2.84690882e+01
+java.lang.ref.Reference$ReferenceHandler.run(),0.00000000e+00,3.87833676e-03
+java.lang.ProcessHandleImpl$1.run(),0.00000000e+00,3.50098508e-03
+java.lang.ProcessHandleImpl.waitForProcessExit0,3.50098508e-03,3.50098508e-03

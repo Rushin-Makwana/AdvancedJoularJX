@@ -1,0 +1,23 @@
+Method Name, Self Energy (Joules), Total Energy (Joules)
+java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker),0.00000000e+00,3.96961809e-03
+org.noureddine.joularjx.PrimeUtils.isPrime(int),3.41304573e+01,3.41304573e+01
+java.util.concurrent.ConcurrentHashMap.replaceNode(java.lang.Object,java.lang.Object,java.lang.Object),7.53469974e-02,7.53469974e-02
+java.lang.Thread.runWith(java.lang.Object,java.lang.Runnable),0.00000000e+00,3.96961809e-03
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard(),0.00000000e+00,3.94557561e+01
+java.lang.System.currentTimeMillis,1.22782955e-01,1.22782955e-01
+java.lang.ref.Reference.waitForReferencePendingList,8.37653092e-03,8.37653092e-03
+java.lang.Thread.run(),0.00000000e+00,3.96961809e-03
+java.lang.invoke.MethodType.methodType(java.lang.Class,java.lang.Class[],boolean),0.00000000e+00,7.53469974e-02
+java.util.concurrent.ThreadPoolExecutor$Worker.run(),0.00000000e+00,3.96961809e-03
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes(int),5.12716889e+00,3.92576261e+01
+jdk.internal.misc.InnocuousThread.run(),0.00000000e+00,3.96961809e-03
+java.lang.invoke.MethodHandleNatives.findMethodHandleType(java.lang.Class,java.lang.Class[]),0.00000000e+00,7.53469974e-02
+java.lang.ref.Reference.processPendingReferences(),0.00000000e+00,8.37653092e-03
+java.util.concurrent.ConcurrentHashMap.remove(java.lang.Object),0.00000000e+00,7.53469974e-02
+org.noureddine.joularjx.OverallEnergyValidationSampling.main(java.lang.String[]),0.00000000e+00,3.94557561e+01
+java.lang.invoke.MethodType$ConcurrentWeakInternSet.expungeStaleElements(),0.00000000e+00,7.53469974e-02
+java.lang.ref.Reference$ReferenceHandler.run(),0.00000000e+00,8.37653092e-03
+java.lang.invoke.MethodType.makeImpl(java.lang.Class,java.lang.Class[],boolean),0.00000000e+00,7.53469974e-02
+java.lang.invoke.MethodType$ConcurrentWeakInternSet.get(java.lang.Object),0.00000000e+00,7.53469974e-02
+java.lang.ProcessHandleImpl$1.run(),0.00000000e+00,3.96961809e-03
+java.lang.ProcessHandleImpl.waitForProcessExit0,3.96961809e-03,3.96961809e-03

@@ -1,0 +1,25 @@
+Method Name, Self Energy (Joules), Total Energy (Joules)
+java.io.Writer.write(java.lang.String),0.00000000e+00,2.31814846e+00
+java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker),0.00000000e+00,3.97020440e-03
+org.noureddine.joularjx.PrimeUtils.isPrime(int),1.79557081e+01,1.79557081e+01
+java.io.PrintStream.println(java.lang.String),0.00000000e+00,2.31814846e+00
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard(),0.00000000e+00,3.02255551e+01
+java.lang.ref.Reference.waitForReferencePendingList,1.30064615e-03,1.30064615e-03
+java.io.BufferedWriter.newLine(),0.00000000e+00,2.31814846e+00
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes(int),9.95169854e+00,2.79074067e+01
+java.io.PrintStream.writeln(java.lang.String),0.00000000e+00,2.31814846e+00
+java.io.BufferedWriter.implWrite(java.lang.String,int,int),0.00000000e+00,2.31814846e+00
+jdk.internal.misc.InnocuousThread.run(),0.00000000e+00,3.97020440e-03
+org.noureddine.joularjx.OverallEnergyValidationSampling.main(java.lang.String[]),0.00000000e+00,3.02255551e+01
+java.lang.ProcessHandleImpl$1.run(),0.00000000e+00,3.97020440e-03
+java.lang.Thread.runWith(java.lang.Object,java.lang.Runnable),0.00000000e+00,3.97020440e-03
+java.lang.StringLatin1.inflate(byte[],int,char[],int,int),2.31814846e+00,2.31814846e+00
+java.lang.Thread.run(),0.00000000e+00,3.97020440e-03
+java.io.BufferedWriter.write(java.lang.String,int,int),0.00000000e+00,2.31814846e+00
+java.util.concurrent.ThreadPoolExecutor$Worker.run(),0.00000000e+00,3.97020440e-03
+java.lang.ref.Reference.processPendingReferences(),0.00000000e+00,1.30064615e-03
+java.lang.String.getChars(int,int,char[],int),0.00000000e+00,2.31814846e+00
+java.lang.StringLatin1.getChars(byte[],int,int,char[],int),0.00000000e+00,2.31814846e+00
+java.lang.ref.Reference$ReferenceHandler.run(),0.00000000e+00,1.30064615e-03
+java.io.PrintStream.implWriteln(java.lang.String),0.00000000e+00,2.31814846e+00
+java.lang.ProcessHandleImpl.waitForProcessExit0,3.97020440e-03,3.97020440e-03

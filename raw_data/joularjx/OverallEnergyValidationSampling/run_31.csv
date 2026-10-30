@@ -1,0 +1,6 @@
+org.noureddine.joularjx.PrimeUtils.isPrime,48.1800
+java.lang.System.currentTimeMillis,0.1544
+java.lang.ref.Reference.waitForReferencePendingList,0.0013
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes,9.5543
+java.lang.invoke.MethodHandleNatives.isCallerSensitive,0.1341
+java.lang.ProcessHandleImpl.waitForProcessExit0,0.0048

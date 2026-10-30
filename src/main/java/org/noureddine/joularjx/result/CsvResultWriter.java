@@ -87,8 +87,8 @@ public class CsvResultWriter implements ResultWriter {
 		if (Objects.isNull(writer)) {
 			throw new IllegalStateException("Please call ResultWriter#setTarget(String) first");
 		}
-
-		writer.write(String.format(Locale.US, "%s,%.4f%n", methodName, methodPower));
+        String escapedMethod = methodName.startsWith("\"") ? methodName : "\"" + methodName + "\"";
+		writer.write(String.format(Locale.US, "%s,%.4f%n", escapedMethod, methodPower));
 	}
     /** {@inheritDoc} */
     @Override
@@ -97,8 +97,8 @@ public class CsvResultWriter implements ResultWriter {
         if (Objects.isNull(writer)) {
             throw new IllegalStateException("Please call ResultWriter#setTarget(String) first");
         }
-
-        writer.write(String.format(Locale.US, "%s,%.8e,%.8e%n", methodName, selfEnergy, totalEnergy));
+        String escapedMethod = methodName.startsWith("\"") ? methodName : "\"" + methodName + "\"";
+        writer.write(String.format(Locale.US, "%s,%.8e,%.8e%n", escapedMethod, selfEnergy, totalEnergy));
     }
     /** {@inheritDoc} */
     @Override

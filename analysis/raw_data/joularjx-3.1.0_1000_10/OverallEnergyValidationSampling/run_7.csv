@@ -1,0 +1,27 @@
+Method Name, Self Energy (Joules), Total Energy (Joules)
+java.util.concurrent.ThreadPoolExecutor.runWorker(java.util.concurrent.ThreadPoolExecutor$Worker),0.00000000e+00,4.56344942e-03
+org.noureddine.joularjx.PrimeUtils.isPrime(int),4.93305490e+01,4.93305490e+01
+jdk.internal.loader.BuiltinClassLoader.findClassOnClassPathOrNull(java.lang.String),0.00000000e+00,1.06135073e-01
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard(),4.18777354e-01,5.85705927e+01
+java.lang.System.currentTimeMillis,5.60580081e-02,5.60580081e-02
+java.lang.ref.Reference.waitForReferencePendingList,6.60048573e-03,6.60048573e-03
+jdk.internal.loader.BuiltinClassLoader.loadClassOrNull(java.lang.String,boolean),0.00000000e+00,1.06135073e-01
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes(int),8.65907330e+00,5.79896223e+01
+jdk.internal.misc.InnocuousThread.run(),0.00000000e+00,4.56344942e-03
+org.noureddine.joularjx.OverallEnergyValidationSampling.main(java.lang.String[]),0.00000000e+00,5.85705927e+01
+java.lang.ClassLoader.loadClass(java.lang.String),0.00000000e+00,1.06135073e-01
+java.io.FileInputStream.read(byte[],int,int),0.00000000e+00,1.06135073e-01
+jdk.internal.misc.TerminatingThreadLocal.threadTerminated(),3.69499190e-01,3.69499190e-01
+java.lang.ProcessHandleImpl$1.run(),0.00000000e+00,4.56344942e-03
+jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(java.lang.String,boolean),0.00000000e+00,1.06135073e-01
+jdk.internal.loader.BuiltinClassLoader.defineClass(java.lang.String,jdk.internal.loader.Resource),0.00000000e+00,1.06135073e-01
+java.io.FileInputStream.readBytes,1.06135073e-01,1.06135073e-01
+java.lang.Thread.runWith(java.lang.Object,java.lang.Runnable),0.00000000e+00,4.56344942e-03
+java.lang.Thread.run(),0.00000000e+00,4.56344942e-03
+java.util.concurrent.ThreadPoolExecutor$Worker.run(),0.00000000e+00,4.56344942e-03
+jdk.internal.loader.Resource.getBytes(),0.00000000e+00,1.06135073e-01
+java.lang.Thread.exit(),0.00000000e+00,3.69499190e-01
+java.lang.ref.Reference.processPendingReferences(),0.00000000e+00,6.60048573e-03
+jdk.internal.loader.BuiltinClassLoader.loadClass(java.lang.String,boolean),0.00000000e+00,1.06135073e-01
+java.lang.ref.Reference$ReferenceHandler.run(),0.00000000e+00,6.60048573e-03
+java.lang.ProcessHandleImpl.waitForProcessExit0,4.56344942e-03,4.56344942e-03

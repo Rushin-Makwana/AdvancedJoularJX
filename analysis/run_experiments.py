@@ -4,39 +4,40 @@ import shutil
 import time
 import subprocess
 
-NUM_RUNS = 40          # Number of valid runs for statistics
+NUM_RUNS = 50          # Number of valid runs for statistics
 WARMUP_RUNS = 2        # Number of initial runs to discard
-COOL_DOWN_SLEEP = 10   # Cool-down sleep in seconds between runs (mitigates thermal throttling)
-TARGET_CLASS = "org.noureddine.joularjx.OverallEnergyValidationThreads"
-SAMPLE_RATE_MS = 1000  # Will be written to config.properties
+COOL_DOWN_SLEEP = 1    # Cool-down sleep in seconds between runs
+TARGET_CLASS = "io.github.jbellis.jvector.example.tutorial.VectorIntro"
 
 EXTENDED_ROOT = "/Users/mac/Downloads/joularjx-3.1.0"
 ORIGINAL_ROOT = "/Users/mac/Documents/RA/joularjx"
 
-def setup_environment(root_dir_abs):
+def setup_environment(root_dir_abs, sub_sample_rate_ms=10):
     """Ensures agent configuration properties are set to read native hardware metrics."""
     config_file = os.path.join(root_dir_abs, "config.properties")
-    print(f"Setting up profiling environment using root: {root_dir_abs}...")
+    print(f"Setting up profiling environment using root: {root_dir_abs} (Sub-sample Rate: {sub_sample_rate_ms}ms)...")
     
     if os.path.exists(config_file):
         with open(config_file, "r") as f:
             content = f.read()
         
-        content = re.sub(
-            r"^stack-monitoring-sample-rate=.*",
-            f"stack-monitoring-sample-rate={SAMPLE_RATE_MS}",
-            content,
-            flags=re.MULTILINE
-        )
-        content = re.sub(
-            r"^vm-monitoring=.*",
-            "vm-monitoring=false",
-            content,
-            flags=re.MULTILINE
-        )
+        # Remove custom property key if present
+        content = re.sub(r"^stack-monitoring-sample-period=.*\n?", "", content, flags=re.MULTILINE)
+
+        if "stack-monitoring-sample-rate=" in content:
+            content = re.sub(
+                r"^stack-monitoring-sample-rate=.*",
+                f"stack-monitoring-sample-rate={sub_sample_rate_ms}",
+                content,
+                flags=re.MULTILINE
+            )
+        else:
+            content += f"\nstack-monitoring-sample-rate={sub_sample_rate_ms}\n"
+
         with open(config_file, "w") as f:
             f.write(content)
-        print(f"Updated {config_file} with sample rate: {SAMPLE_RATE_MS}ms and disabled VM monitoring (native mode enabled)")
+
+        print(f"Updated {config_file} with sub-sample rate: {sub_sample_rate_ms}ms")
     else:
         print(f"Warning: {config_file} not found. Using defaults in agent JAR.")
 
@@ -45,12 +46,13 @@ def get_newest_result_dir(root_dir_abs):
     results_dir = os.path.join(root_dir_abs, "joularjx-result")
     if not os.path.exists(results_dir):
         return None
-    folders = [f for f in os.listdir(results_dir) if "-" in f and os.path.isdir(os.path.join(results_dir, f))]
-    if not folders:
-        return None
+
     try:
-        newest_folder = max(folders, key=lambda f: int(f.split("-")[1]))
-        return os.path.join(results_dir, newest_folder)
+        subdirs = [os.path.join(results_dir, d) for d in os.listdir(results_dir) if os.path.isdir(os.path.join(results_dir, d))]
+        if not subdirs:
+            return None
+        subdirs.sort(key=lambda d: os.path.getmtime(d), reverse=True)
+        return subdirs[0]
     except Exception as e:
         print(f"Error parsing folder timestamps: {e}")
         return None
@@ -67,18 +69,24 @@ def copy_csv_to_raw_data(result_dir, dest_path):
     shutil.copy2(src_csv, dest_path)
     return True
 
-def run_single_experiment(run_num, total_runs, raw_data_dir, root_dir_abs, jar_path, classpath):
+JVECTOR_JAR = "/Users/mac/Developer/jvector/jvector-examples/target/jvector-examples-4.0.1-SNAPSHOT-jar-with-dependencies.jar"
+JAVA_BIN = "/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home/bin/java"
+
+def run_single_experiment(run_num, total_runs, raw_data_dir, root_dir_abs, jar_path, classpath, sample_period_ms=1000):
     """Runs a single iteration of the Java workload with the agent and saves the logs and CSV."""
     cmd = [
-        "sudo",
-        "java",
+        JAVA_BIN,
+        "-XX:CompileCommand=dontinline,io.github.jbellis.jvector.*::*",
+        "--add-modules=jdk.incubator.vector",
+        f"-Djoularjx.sampleTime={sample_period_ms}",
+        f"-Djoularjx.config={os.path.join(root_dir_abs, 'config.properties')}",
         f"-javaagent:{jar_path}",
-        "-cp", classpath,
+        "-cp", JVECTOR_JAR if "jvector" in TARGET_CLASS.lower() else classpath,
         TARGET_CLASS
     ]
     
     run_label = f"Warm-up Run {run_num}" if run_num <= WARMUP_RUNS else f"Valid Run {run_num - WARMUP_RUNS}"
-    print(f"[{run_num}/{total_runs}] [{run_label}] Executing target class: {TARGET_CLASS}...")
+    print(f"[{run_num}/{total_runs}] [{run_label}] Executing target class: {TARGET_CLASS} (Sample Period: {sample_period_ms}ms)...")
     
     result = subprocess.run(cmd, cwd=root_dir_abs, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     combined_output = result.stdout + "\n" + result.stderr
@@ -108,9 +116,9 @@ def run_single_experiment(run_num, total_runs, raw_data_dir, root_dir_abs, jar_p
     print(f"[{run_num}/{total_runs}] Warning: Could not locate result CSV files.")
     return False
 
-def run_for_root(root_path, label):
+def run_for_root(root_path, label, sample_period_ms=1000, sub_sample_rate_ms=10):
     root_dir_abs = os.path.abspath(root_path)
-    setup_environment(root_dir_abs)
+    setup_environment(root_dir_abs, sub_sample_rate_ms)
     
     class_name = TARGET_CLASS.split(".")[-1]
     raw_data_dir = os.path.join("raw_data", label, class_name)
@@ -123,33 +131,36 @@ def run_for_root(root_path, label):
         os.remove(consolidated_csv)
     
     total_runs = NUM_RUNS + WARMUP_RUNS
-    jar_path = os.path.join(root_dir_abs, "target", "joularjx-3.1.0.jar")
-    # Clean classpath pointing to Extended compiled tests to avoid namespace collision
-    classpath = os.path.join(os.path.abspath(EXTENDED_ROOT), 'target', 'test-classes')
+    jar_path = os.path.join(root_dir_abs, "target", "joularjx-3.1.0.jar") if "3.1.0" in root_path else os.path.join(root_dir_abs, "target", "joularjx-3.0.0.jar")
+    if not os.path.exists(jar_path):
+        jar_path = os.path.join(root_dir_abs, "target", "joularjx-3.1.0.jar")
+    
+    classpath = os.path.join(root_dir_abs, 'target', 'test-classes') + ":" + os.path.join(root_dir_abs, 'target', 'classes')
     
     print(f"Executing {WARMUP_RUNS} warm-up runs to eliminate OS disk caching bias...")
     for i in range(1, WARMUP_RUNS + 1):
-        run_single_experiment(i, total_runs, raw_data_dir, root_dir_abs, jar_path, classpath)
+        run_single_experiment(i, total_runs, raw_data_dir, root_dir_abs, jar_path, classpath, sample_period_ms)
         if COOL_DOWN_SLEEP > 0:
-            print(f"Sleeping for {COOL_DOWN_SLEEP} seconds...")
             time.sleep(COOL_DOWN_SLEEP)
             
     print(f"\nExecuting {NUM_RUNS} valid runs for statistical analysis...")
     for i in range(WARMUP_RUNS + 1, total_runs + 1):
-        success = run_single_experiment(i, total_runs, raw_data_dir, root_dir_abs, jar_path, classpath)
+        success = run_single_experiment(i, total_runs, raw_data_dir, root_dir_abs, jar_path, classpath, sample_period_ms)
         if not success:
             print(f"Warning: Run {i} failed. Stopping loop.")
             break
         if COOL_DOWN_SLEEP > 0 and i < total_runs:
-            print(f"Sleeping for {COOL_DOWN_SLEEP} seconds...")
             time.sleep(COOL_DOWN_SLEEP)
 
 def main():
-    print(">>> RUNNING EXPERIMENTS FOR ORIGINAL VERSION <<<")
-    run_for_root(ORIGINAL_ROOT, "joularjx")
+    global JVECTOR_JAR
+    print(">>> 1. RUNNING EXPERIMENTS FOR ORIGINAL JVECTOR BASELINE (50 Valid Runs) <<<")
+    JVECTOR_JAR = "/Users/mac/Developer/jvector/jvector-examples/target/jvector-examples-4.0.1-SNAPSHOT-jar-with-dependencies.jar"
+    run_for_root(EXTENDED_ROOT, "joularjx", sample_period_ms=1000, sub_sample_rate_ms=10)
     
-    print("\n\n>>> RUNNING EXPERIMENTS FOR EXTENDED VERSION <<<")
-    run_for_root(EXTENDED_ROOT, "joularjx-3.1.0")
+    print("\n\n>>> 2. RUNNING EXPERIMENTS FOR OPTIMIZED JVECTOR (50 Valid Runs) <<<")
+    JVECTOR_JAR = "/Users/mac/Developer/OptimizedJVector/jvector-examples/target/jvector-examples-4.0.1-SNAPSHOT-jar-with-dependencies.jar"
+    run_for_root(EXTENDED_ROOT, "joularjx-3.1.0", sample_period_ms=1000, sub_sample_rate_ms=10)
     
     print("\nData collection finished successfully for both versions.")
 

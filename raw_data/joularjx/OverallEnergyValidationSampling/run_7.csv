@@ -1,0 +1,6 @@
+org.noureddine.joularjx.PrimeUtils.isPrime,51.1682
+java.lang.System.currentTimeMillis,0.2203
+java.lang.ref.Reference.waitForReferencePendingList,0.0019
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard,0.1945
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes,9.6019
+java.lang.ProcessHandleImpl.waitForProcessExit0,0.0068

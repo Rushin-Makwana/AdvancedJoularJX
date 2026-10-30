@@ -1,0 +1,7 @@
+java.io.FileDescriptor.close0,0.0973
+org.noureddine.joularjx.PrimeUtils.isPrime,52.1683
+java.lang.System.currentTimeMillis,0.2415
+java.lang.ref.Reference.waitForReferencePendingList,0.0020
+org.noureddine.joularjx.OverallEnergyValidationSampling.testScenarioStandard,0.1938
+org.noureddine.joularjx.PrimeUtils.sumOfPrimes,9.1562
+java.lang.ProcessHandleImpl.waitForProcessExit0,0.0093
